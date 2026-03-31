@@ -1,0 +1,44 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2867
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww32400\viewh18440\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 import os\
+from dotenv import load_dotenv\
+import requests\
+\
+load_dotenv()\
+API_KEY = os.getenv("API_KEY")\
+\
+if not API_KEY:\
+    raise ValueError("API_KEY not found. Set it in .env file.")\
+\
+def get_weather(city):\
+    url = f"http://api.openweathermap.org/data/2.5/weather?q=\{city\}&appid=\{API_KEY\}"\
+\
+    try:\
+        response = requests.get(url)\
+\
+        if response.status_code == 429:\
+            print(" Too many requests. Please try again later.")\
+            return\
+\
+        if response.status_code != 200:\
+            print(f" Error: \{response.status_code\} - \{response.reason\}")\
+            return\
+\
+        data = response.json()\
+\
+        if "main" not in data:\
+            print(" Unexpected response format.")\
+            return\
+\
+        print(f"Temperature: \{data['main']['temp']\}")\
+\
+    except requests.exceptions.RequestException:\
+        print(" Network error occurred.")\
+\
+city = input("Enter city: ")\
+get_weather(city)}
